@@ -1,14 +1,13 @@
 import React, { Component } from 'react';
 import { Provider } from 'react-redux';
-import { createStore } from 'redux';
-import { SafeAreaView, Text } from 'react-native';
+import { createStore, applyMiddleware } from 'redux';
 import firebase from 'firebase';
+import ReduxThunk from 'redux-thunk';
 
 import reducers from './reducers';
-import LoginForm from './components/LoginForm';
+import RouterComponent from './Router';
 
 class App extends Component {
-
   componentWillMount() {
     // Initialize Firebase
     const config = {
@@ -17,17 +16,17 @@ class App extends Component {
       databaseURL: 'https://manager-924d5.firebaseio.com',
       projectId: 'manager-924d5',
       storageBucket: 'manager-924d5.appspot.com',
-      messagingSenderId: '629144525573'
+      messagingSenderId: '629144525573',
     };
     firebase.initializeApp(config);
   }
 
   render() {
+    const store = createStore(reducers, {}, applyMiddleware(ReduxThunk));
+
     return (
-      <Provider store={createStore(reducers)}>
-        <SafeAreaView>
-          <LoginForm />
-        </SafeAreaView>
+      <Provider store={store}>
+        <RouterComponent />
       </Provider>
     );
   }
